@@ -1,28 +1,38 @@
-﻿using jubank.Modelos.Conta;
+﻿using JuBank.Modelos.Conta;
 using jubank_ATENDIMENTO.jubank.Exceptions;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
+using JuBank.GeradorChavePix;
+
 
 namespace JuBank.jubank.Atendimento
 {
     internal class JuBankAtendimento
     {
-        private List<ContaCorrente> _listaDeContas = new List<ContaCorrente>();
-
+        private List<ContaCorrente> _listaDeContas = new List<ContaCorrente>(){
+          new ContaCorrente(95, "123456-X"){Saldo=100,Titular = new Cliente{Cpf="11111",Nome ="Henrique",Profissao="Dev"}},
+          new ContaCorrente(95, "951258-X"){Saldo=200,Titular = new Cliente{Cpf="22222",Nome ="Pedro",Profissao="Designer"}},
+          new ContaCorrente(94, "987321-W"){Saldo=60,Titular = new Cliente{Cpf="33333",Nome ="Marisa",Profissao="Professor"}}
+        };
         public void AtendimentoCliente()
         {
             try
             {
                 char opcao = '0';
-                while (opcao != '6')
+                while (opcao != '9')
                 {
                     Console.Clear();
                     Console.WriteLine("===============================");
-                    Console.WriteLine("===       Atendimento       ===");
-                    Console.WriteLine("===  1 - Cadastrar Conta    ===");
-                    Console.WriteLine("===  2 - Listar Contas      ===");
-                    Console.WriteLine("===  3 - Remover Conta      ===");
-                    Console.WriteLine("===  4 - Ordenar Contas     ===");
-                    Console.WriteLine("===  5 - Pesquisar Conta    ===");
-                    Console.WriteLine("===  6 - Sair do Sistema    ===");
+                    Console.WriteLine("===        Atendimento        ===");
+                    Console.WriteLine("===  1 - Cadastrar Conta      ===");
+                    Console.WriteLine("===  2 - Listar Contas        ===");
+                    Console.WriteLine("===  3 - Remover Conta        ===");
+                    Console.WriteLine("===  4 - Ordenar Contas       ===");
+                    Console.WriteLine("===  5 - Pesquisar Conta      ===");
+                    Console.WriteLine("===  6 - Exportar Contas JSON ===");
+                    Console.WriteLine("===  7 - Exportar Contas XML  ===");
+                    Console.WriteLine("===  8 - Cadastrar PIX        ===");
+                    Console.WriteLine("===  9 - Sair do Sistema      ===");
                     Console.WriteLine("===============================");
                     Console.WriteLine("\n\n");
                     Console.Write("Digite a opção desejada: ");
@@ -54,6 +64,15 @@ namespace JuBank.jubank.Atendimento
                             PesquisarContas();
                             break;
                         case '6':
+                            ExportarContasJSON();
+                            break;
+                        case '7':
+                            ExportarContasXML();
+                            break;
+                        case '8':
+                            CadastrarChavePix();
+                            break;
+                        case '9':
                             EncerrarAplicacao();
                             break;
                         default:
@@ -162,6 +181,25 @@ namespace JuBank.jubank.Atendimento
             Console.WriteLine("... Lista de Contas ordenadas ...");
             Console.ReadKey();
         }
+        List<ContaCorrente> ConsultaPorCPFTitular(string cpf)
+        {
+            return (from conta in _listaDeContas
+                    where conta.Titular.Cpf == cpf
+                    select conta).ToList();
+        }
+        List<ContaCorrente> ConsultaPorNumeroConta(string? numeroConta)
+        {
+            return (from conta in _listaDeContas
+                    where conta.NumeroConta == numeroConta
+                    select conta).ToList();
+        }
+        List<ContaCorrente> ConsultaPorAgencia(int numeroAgencia)
+        {
+            return (from conta in _listaDeContas
+                    where conta.NumeroAgencia == numeroAgencia
+                    select conta).ToList();
+
+        }
         private void PesquisarContas()
         {
             Console.Clear();
@@ -204,28 +242,108 @@ namespace JuBank.jubank.Atendimento
                     Console.WriteLine("Opção não implementada.");
                     break;
             }
+        }
+        private void ExportarContasJSON()
+        {
+            Console.Clear();
+            Console.WriteLine("===============================");
+            Console.WriteLine("===     EXPORTAR CONTAS     ===");
+            Console.WriteLine("===============================");
+            Console.WriteLine("\n");
 
-            List<ContaCorrente> ConsultaPorCPFTitular(string cpf)
+            if (_listaDeContas.Count <= 0)
             {
-                return (from conta in _listaDeContas
-                        where conta.Titular.Cpf == cpf
-                        select conta).ToList();
+                Console.WriteLine("... Não existem dados para exportação...");
+                Console.ReadKey();
             }
-
-            List<ContaCorrente> ConsultaPorNumeroConta(string? numeroConta)
+            else
             {
-                return (from conta in _listaDeContas
-                        where conta.NumeroConta == numeroConta
-                        select conta).ToList();
+                string json = JsonConvert.SerializeObject(_listaDeContas,
+                    Formatting.Indented);
+                try
+                {
+                    FileStream fs = new FileStream(@"d:\tmp\export\contas.json",
+                        FileMode.Create);
+                    using (StreamWriter streamWriter = new StreamWriter(fs))
+                    {
+                        streamWriter.WriteLine(json);
+                    }
+                    Console.WriteLine(@"Arquivo salvo em d:\tmp\export\");
+                    Console.ReadKey();
+                }
+                catch (Exception excecao)
+                {
+                    throw new JuBankException(excecao.Message);
+                    Console.ReadKey();
+                }
             }
+        }
+        private void ExportarContasXML()
+        {
+            Console.Clear();
+            Console.WriteLine("===============================");
+            Console.WriteLine("===     EXPORTAR CONTAS     ===");
+            Console.WriteLine("===============================");
+            Console.WriteLine("\n");
 
-            List<ContaCorrente> ConsultaPorAgencia(int numeroAgencia)
+            if (_listaDeContas.Count <= 0)
             {
-                return (from conta in _listaDeContas
-                        where conta.NumeroAgencia == numeroAgencia
-                        select conta).ToList();
+                Console.WriteLine("... Não existem dados para exportação...");
+                Console.ReadKey();
+            }
+            else
+            {
+                var contasXML = new XmlSerializer(typeof(List<ContaCorrente>));
+
+                try
+                {
+                    FileStream fs = new FileStream(@"d:\tmp\export\contas.xml", 
+                        FileMode.Create);
+                    using (StreamWriter streamwriter = new StreamWriter(fs))
+                    {
+                        contasXML.Serialize(streamwriter, _listaDeContas);
+                    }
+                    Console.WriteLine(@"Arquivo salvo em c:\temp\export\");
+                    Console.ReadKey();
+                }
+                catch (Exception excecao)
+                {
+                    throw new JuBankException(excecao.Message);
+                    Console.ReadKey();
+                }
 
             }
+        }
+        private void CadastrarChavePix()
+        {
+            Console.Clear();
+            Console.WriteLine("===============================");
+            Console.WriteLine("===      Cadastrar PIX      ===");
+            Console.WriteLine("===============================");
+            Console.WriteLine("\n");
+
+            Console.Write("Número da conta para cadastrar PIX: ");
+            string numeroConta = Console.ReadLine();
+            try
+            {
+                ConsultaPorNumeroConta(numeroConta)
+                foreach (var conta in _listaDeContas)
+                {
+                    if (numeroConta == conta.NumeroConta)
+                    {
+                        string pix = GeradorPix.GetChavePix();
+                        conta.ChavesPix.Add(pix);
+                        Console.WriteLine($"Pix {pix} gerado com sucesso para {conta.Titular.Nome}.");
+                        break;
+                    }
+                }
+            }
+            catch (Exception excecao)
+            {
+                throw new JuBankException(excecao.Message);
+                Console.ReadKey();
+            }
+            finally { Console.ReadKey(); }
         }
         private void EncerrarAplicacao()
         {

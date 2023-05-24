@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="jubank.Modelos\**" />
+    <EmbeddedResource Remove="jubank.Modelos\**" />
+    <None Remove="jubank.Modelos\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JuBank.GeradorChavePix" Version="1.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\jubank.Modelos\juBank.Modelos.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="JuBank.GeradorChavePix">
+      <HintPath>..\..\JuBank.GeradorChavePix\JuBank.GeradorChavePix\bin\Debug\net7.0\JuBank.GeradorChavePix.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

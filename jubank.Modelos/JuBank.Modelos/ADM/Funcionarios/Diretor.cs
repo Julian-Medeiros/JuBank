@@ -1,5 +1,5 @@
 ﻿
-namespace jubank.Modelos.ADM.Funcionarios
+namespace JuBank.Modelos.ADM.Funcionarios
 {
     public class Diretor : FuncionarioAutenticavel
     {
@@ -7,13 +7,11 @@ namespace jubank.Modelos.ADM.Funcionarios
         {
             Console.WriteLine("Criando DIRETOR");
         }
-
-        public override void AumentarSalario()
+        protected internal override void AumentarSalario()
         {
             this.Salario *= 1.15;
         }
-
-        public override double getBonificacao()
+        protected internal override double getBonificacao()
         {
             return this.Salario * 0.5;
         }

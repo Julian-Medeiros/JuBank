@@ -1,12 +1,7 @@
 ﻿
-using jubank.Modelos.ADM.Funcionarios;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using JuBank.Modelos.ADM.Funcionarios;
 
-namespace jubank.Modelos.ADMs.Utilitario
+namespace JuBank.Modelos.ADMs.Utilitario
 {
     public class GerenciadorDeBonificacao
     {

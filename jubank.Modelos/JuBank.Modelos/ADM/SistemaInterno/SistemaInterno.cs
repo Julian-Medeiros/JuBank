@@ -1,4 +1,4 @@
-﻿namespace jubank.Modelos.ADM.SistemaInterno
+﻿namespace JuBank.Modelos.ADM.SistemaInterno
 {
     public class SistemaInterno
     {

@@ -1,15 +1,11 @@
-﻿namespace jubank.Modelos.Conta
+﻿namespace JuBank.Modelos.Conta
 {
 	public class ContaCorrente
 	{
 		private int _numero_agencia;
-
 		private string _conta;
-
 		private double saldo;
-
 		public Cliente Titular { get; set; }
-
 		public int NumeroAgencia
 		{
 			get
@@ -24,7 +20,6 @@
 				}
 			}
 		}
-
 		public string NumeroConta
 		{
 			get
@@ -39,7 +34,6 @@
 				}
 			}
 		}
-
 		public double Saldo
 		{
 			get
@@ -54,10 +48,10 @@
 				}
 			}
 		}
-
 		public static int TotalDeContasCriadas { get; set; }
 
-		public bool Sacar(double valor)
+        public List<string> ChavesPix = new List<string>();
+        public bool Sacar(double valor)
 		{
 			if (saldo < valor)
 			{
@@ -70,7 +64,6 @@
 			saldo -= valor;
 			return true;
 		}
-
 		public void Depositar(double valor)
 		{
 			if (!(valor < 0.0))
@@ -78,7 +71,6 @@
 				saldo += valor;
 			}
 		}
-
 		public bool Transferir(double valor, ContaCorrente destino)
 		{
 			if (saldo < valor)
@@ -93,7 +85,6 @@
 			destino.saldo += valor;
 			return true;
 		}
-
 		public ContaCorrente(int numero_agencia)
 		{
 			NumeroAgencia = numero_agencia;
@@ -101,17 +92,41 @@
 			Titular = new Cliente();
 			TotalDeContasCriadas++;
 		}
+        public ContaCorrente(int numeroAgencia, string numeroConta)
+        {
+            NumeroAgencia = numeroAgencia;
+			NumeroConta = numeroConta;
+            Titular = new Cliente();
+            TotalDeContasCriadas++;
+        }
+        private ContaCorrente()
+        {
 
-		public override string ToString()
+        }
+		
+        public override string ToString()
 		{
-
-			return $"===  Dados da Conta  === \n" +
-                   $"Número da Conta : {this.NumeroConta} \n" +
-                   $"Saldo da Conta : {this.Saldo} \n" +
-                   $"Titular da Conta: {this.Titular.Nome} \n" +
-                   $"CPF do Titular  : {this.Titular.Cpf} \n" +
-                   $"Profissão do Titular: {this.Titular.Profissao} \n" +
-                   $">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
+			if (ChavesPix.Count() <= 0)
+			{
+				return $"===  Dados da Conta  === \n" +
+					   $"Número da Conta: {this.NumeroConta} \n" +
+					   $"Saldo da Conta: {this.Saldo} \n" +
+					   $"Titular da Conta: {this.Titular.Nome} \n" +
+					   $"CPF do Titular: {this.Titular.Cpf} \n" +
+					   $"Profissão do Titular: {this.Titular.Profissao} \n\n" +
+					   $">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> \n";
+			}
+			else
+			{
+                return $"===  Dados da Conta  === \n" +
+					   $"Número da Conta: {this.NumeroConta} \n" +
+					   $"PIX: {string.Join(", ", this.ChavesPix)} \n" +
+					   $"Saldo da Conta: {this.Saldo} \n" +
+					   $"Titular da Conta: {this.Titular.Nome} \n" +
+					   $"CPF do Titular: {this.Titular.Cpf} \n" +
+					   $"Profissão do Titular: {this.Titular.Profissao} \n\n" +
+					   $">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> \n";
+            }
         }
 
     }

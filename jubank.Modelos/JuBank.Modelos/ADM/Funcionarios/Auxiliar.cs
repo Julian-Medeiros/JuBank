@@ -1,17 +1,15 @@
-﻿namespace jubank.Modelos.ADM.Funcionarios
+﻿namespace JuBank.Modelos.ADM.Funcionarios
 {
     public class Auxiliar : Funcionario
     {
         public Auxiliar(string cpf) : base(2000, cpf)
         {
         }
-
-        public override void AumentarSalario()
+        protected internal override void AumentarSalario()
         {
             Salario *= 1.1;
         }
-
-        public override double getBonificacao()
+        protected internal override double getBonificacao()
         {
             return Salario * 0.2;
         }
