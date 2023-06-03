@@ -8,7 +8,11 @@ Created and Implemented:
 
 	account listing;
 
-	account sorting.
+	account sorting;
+	
+	searching for a specific account or a group of accounts;
+	
+	exporting account data to XML and JSON
 
 Created but NOT Implemented:
 
