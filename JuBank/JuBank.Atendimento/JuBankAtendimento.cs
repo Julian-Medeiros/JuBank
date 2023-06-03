@@ -326,7 +326,6 @@ namespace JuBank.jubank.Atendimento
             string numeroConta = Console.ReadLine();
             try
             {
-                ConsultaPorNumeroConta(numeroConta)
                 foreach (var conta in _listaDeContas)
                 {
                     if (numeroConta == conta.NumeroConta)
